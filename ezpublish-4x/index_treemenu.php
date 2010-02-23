@@ -1,5 +1,4 @@
 <?php
-
 //
 // SOFTWARE NAME: eZ Publish
 // SOFTWARE RELEASE: 4.1.2
