@@ -54,14 +54,14 @@ Also moves the 'share/icons' location so 'share' directory can be symlinked.
 	
 4. Repeat with other startup files, eg:
 
-  * index_image.php
-  * index_image_dfsmysql.php
-  * index_image_mysql.php
-  * index_treemenu.php
-  * index_ajax.php
-  * runcronjobs.php
-  * soap.php
-  * webdav.php
+* index_image.php
+* index_image_dfsmysql.php
+* index_image_mysql.php
+* index_treemenu.php
+* index_ajax.php
+* runcronjobs.php
+* soap.php
+* webdav.php
 
 5. Modify server setup (e. http.conf) to call 'patch_index.php' instead of defaults, Eg:
 	
