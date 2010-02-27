@@ -326,9 +326,11 @@ class eZSendNewsletterItem extends eZPersistentObject
 
      \return eZSendNewsletterItem count
     */
+	// HACK!
+	// static function count( $status = eZSendNewsletterItem::SendStatusNone)
     static function count( $status = eZSendNewsletterItem::SendStatusNone, $newsletterID = false)
     {
-		// stevo
+		// HACK!
         $params = array( 'send_status' => $status );
 		if ( $newsletterID )
 			$params['newsletter_id'] = $newsletterID;

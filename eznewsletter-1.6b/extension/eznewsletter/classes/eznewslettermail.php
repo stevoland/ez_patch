@@ -74,7 +74,7 @@ class eZNewsletterMail
 
         $ini = eZINI::instance();
 		
-		// stevo
+		// HACK! Ignore system content type
         //if ( $ini->hasVariable( 'MailSettings', 'ContentType' ) )
         //    $this->setContentType( $ini->variable( 'MailSettings', 'ContentType' ) );
 

@@ -146,6 +146,8 @@ class eZNewsletter extends eZPersistentObject
                                                                           'datatype' => 'string',
                                                                           'default' => '',
                                                                           'required' => true ),
+										 // HACK! fix typo
+										 // 'recurrence_last_sent' => array( 'name' => 'SendStatus',
                                          'recurrence_last_sent' => array( 'name' => 'RecurrenceLastSent',
                                                                           'datatype' => 'integer',
                                                                           'default' => 0,
@@ -684,17 +686,7 @@ class eZNewsletter extends eZPersistentObject
         $tpl->setVariable( 'hostname', $hostname );
         $tpl->setVariable( 'contentobject', $contentObject );
         $tpl->setVariable( 'newsletter', $this );
-		
-		
-		// stevo
-		$http = eZHTTPTool::instance();
-		//$oldUseFullUrl = $http->UseFullUrl;
-		//$http->UseFullUrl = true;
-		
         $body = $tpl->fetch( $template );
-		
-		// stevo
-		//$http->UseFullUrl = $oldUseFullUrl;
         
         // Get images used.
         $imageList = false;
@@ -838,7 +830,8 @@ class eZNewsletter extends eZPersistentObject
     /*!
       Sends an email with MIME headers.      
      */
-	 // stevo
+	 // HACK!
+	// static function sendNewsletterMail( $newsletter, $sendPreview = false, $previewFormat = false )
     static function sendNewsletterMail( $newsletter, $sendPreview = false, $previewFormat = false, $receiverLimit = null )
     {
         $sendMailSettings = eZINI::instance( 'ezsendmailsettings.ini' );
@@ -935,9 +928,7 @@ class eZNewsletter extends eZPersistentObject
             $sendCount = 0;
             $skipCount = 0;
             
-			// stevo
-            //while( $receiverList = eZSendNewsletterItem::fetchByNewsletterID( $newsletter->attribute( 'id' ) ) )
-            //{
+			// HACK!
 				$receiverList = eZSendNewsletterItem::fetchByNewsletterID( $newsletter->attribute( 'id' ),
                                                                               0,
                                                                               $receiverLimit );
@@ -997,7 +988,6 @@ class eZNewsletter extends eZPersistentObject
                         $outputFormat = eZNewsletter::OutputFormatHTML;
                     }
 
-					// stevo
                     if ( in_array( eZNewsletter::OutputFormatExternalHTML, $userOutputFormatList ) &&
                          in_array( eZNewsletter::OutputFormatExternalHTML, $newsletterOutputFormatList  ) )
                     {
@@ -1072,7 +1062,7 @@ class eZNewsletter extends eZPersistentObject
                         echo $reply;
                     }
                 }
-            //}
+            }
             return array( 'sendCount' => $sendCount, 'skipCount' => $skipCount );
         }
         else
