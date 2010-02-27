@@ -491,7 +491,8 @@ class eZNodeviewfunctions
                            'store'   => false );
         }
         
-        
+        // HACK! Ignore showInvisibleNodes policy for the 'detail' view mode in ez_sbase. We do policy
+        // checking in the template.
 		if ( $ViewMode != 'detail' )
 		{
 	        if ( $node->attribute( 'is_invisible' ) && !eZContentObjectTreeNode::showInvisibleNodes() )
@@ -513,6 +514,10 @@ class eZNodeviewfunctions
                                                               $LanguageCode, $ViewMode, $Offset,
                                                               $viewParameters, $collectionAttributes,
                                                               $validation );
+
+        // 'store' depends on noCache: if $noCache is set, this means that retrieve
+        // returned it, and the noCache fake cache file is already stored
+        // and should not be stored again
         $retval = array( 'content' => $Result,
                          'scope'   => 'viewcache',
                          'store'   => !( isset( $noCache ) and $noCache ) );

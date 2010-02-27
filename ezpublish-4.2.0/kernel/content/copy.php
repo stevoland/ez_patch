@@ -64,7 +64,7 @@ $contentINI = eZINI::instance( 'content.ini' );
 */
 function copyObject( $Module, $object, $allVersions, $newParentNodeID )
 {
-	// STEVO - hack for my toolbar
+	// HACK! for my toolbar
 	// TODO - how to persist ViewMode action var?
 	$viewMode = 'detail';
 	
@@ -74,6 +74,7 @@ function copyObject( $Module, $object, $allVersions, $newParentNodeID )
     // check if we can create node under the specified parent node
     if( ( $newParentNode = eZContentObjectTreeNode::fetch( $newParentNodeID ) ) === null )
         return $Module->redirectToView( 'view', array( $viewMode, 2 ) );
+	// END HACK!
 
     $classID = $object->attribute('contentclass_id');
 
@@ -122,6 +123,7 @@ function copyObject( $Module, $object, $allVersions, $newParentNodeID )
     eZContentObjectTreeNode::updateNodeVisibility( $newNode, $newParentNode );
 
     $db->commit();
+	// HACK!
     return $Module->redirectToView( 'view', array( $viewMode, $newParentNodeID ) );
 }
 
@@ -151,7 +153,7 @@ function browse( $Module, $object )
     $ignoreNodesSelect = array_unique( $ignoreNodesSelect );
     $ignoreNodesClick = array_unique( $ignoreNodesClick );
 
-	// STEVO - hack for front side editing
+	// HACK! for front side editing
     $viewMode = 'full';
 	$http = eZHTTPTool::instance();
 	if ( $http->hasVariable( 'ViewMode' ) )

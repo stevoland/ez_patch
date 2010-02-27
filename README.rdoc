@@ -4,7 +4,7 @@ A compilation of patches which can be shared between eZ Publish installations. A
 
 == Features
 
-See inline comments for details.
+See inline comments for details. Search for HACK!
 
 * eznewsletter-1.6b
   * Fixes a host of bugs

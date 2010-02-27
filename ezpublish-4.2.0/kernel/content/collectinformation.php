@@ -306,7 +306,8 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
             {
                 $sender = $ini->variable( "MailSettings", "EmailSender" );
             }
-            // stevo
+            
+            // HACK! Modifying the sender can alert spam guards. We just change the reply-to.
             //$mail->setSender( $sender );
             $mail->setReplyTo( $sender );
 

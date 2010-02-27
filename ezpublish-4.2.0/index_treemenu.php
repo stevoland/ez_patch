@@ -42,6 +42,8 @@ if ( isset( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) )
 
 require 'autoload.php';
 require_once( 'kernel/common/ezincludefunctions.php' );
+
+// HACK! Added this line. Required for inclusion of treemenu in ez_sbase.
 require_once( 'kernel/common/i18n.php' );
 
 function ezupdatedebugsettings()

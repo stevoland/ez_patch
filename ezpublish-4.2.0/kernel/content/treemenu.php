@@ -113,6 +113,7 @@ $user = eZUser::currentUser();
 $limitedAssignmentValueList = implode( ',', $user->limitValueList() );
 $roleList = implode( ',', $user->roleIDList() );
 
+// HACK!
 $showHidden = ( ($contentstructuremenuINI->variable( 'TreeMenu', 'ShowHiddenNodes' ) == 'true') ||
 				($siteINI->variable( 'SiteAccessSettings', 'ShowHiddenNodes' ) == 'true') );
 
@@ -168,6 +169,7 @@ else
     $conditions = array( 'Depth' => '1',
                          'SortBy' => $node->sortArray() );
     
+	// HACK!
     if ( $showHidden )
     {
     	$conditions['IgnoreVisibility'] = true;
