@@ -1,0 +1,87 @@
+= ez_patch
+
+A compilation of patches which can be shared between eZ Publish installations. Aids maintenance and upgrading.
+
+== Features
+
+See inline comments for details
+
+* eznewsletter-1.6b
+	* Fixes a host of bugs
+* ezoe-5.0.4 (hope to remove)
+	* add modified time to cached js+css files.
+	* mofifications for _soextra extension
+* varnish-4.2.0
+	* specific hacks for varnish compatability. Should be able to move all this to workflows.
+* ezpublish-4.2.0
+	* misc stuff, mostly for implementing advanced frontend editing features in ez_sbase.
+	
+Also moves the 'share/icons' location so 'share' directory can be symlinked.
+
+
+== Installation
+
+1. Include in 'patch' directory in root of eZ Publish installation.
+
+2. Create 'patch_paths.php' in root:
+	
+	<?php
+
+		// Array of patches within ez_patch that you want to include for this installation
+		$patches = array(
+		    'varnish-4.2.0',
+			'eznewsletter-1.6b',
+			'ezoe-5.0.4',
+			'ezpublish-4.2.0'
+		);
+		
+		$base_path = 'patch/';
+		for ( $i = count($patches)-1; $i >= 0; $i-- )
+		{
+			set_include_path($base_path . $patches[$i] . PATH_SEPARATOR . get_include_path());
+		}
+	
+	?>
+
+3. Create 'patch_index.php' etc to override starting files:
+	
+	<?php
+
+	include( 'patch_paths.php' );
+	include( 'index.php' );
+	
+	?>
+	
+4. Repeat with other startup files, eg:
+	
+	* index_image.php
+	* index_image_dfsmysql.php
+	* index_image_mysql.php
+	* index_treemenu.php
+	* index_ajax.php
+	* runcronjobs.php
+	* soap.php
+	* webdav.php
+
+5. Modify server setup (e. http.conf) to call 'patch_index.php' instead of defaults, Eg:
+	
+	# for Eclipse integration
+	RewriteRule soap/? /patch_soap.php [L]
+	
+	# for ezjscore extension
+    RewriteRule ezjscore/call/ /patch_index_ajax.php [L]
+    RewriteRule ezjscore/run/ /patch_index_ajax.php [L]
+    
+    RewriteRule ^/content/treemenu/.* /patch_index_treemenu.php [L]
+    
+    RewriteRule .* /patch_index.php
+    
+6. OPTIONAL. Add to icon.ini (included in ez_sbase):
+	
+	[IconSettings]
+	# Where to look for icons, relative to eZ Publish
+	Repository=patch/icons
+	
+7. OPTIONAL. Add rewrite rule:
+	
+	Rewriterule ^/patch/icons/.* - [L]
