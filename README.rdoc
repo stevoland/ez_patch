@@ -53,7 +53,7 @@ Also moves the 'share/icons' location so 'share' directory can be symlinked.
 	?>
 	
 4. Repeat with other startup files, eg:
-	
+
   * index_image.php
   * index_image_dfsmysql.php
   * index_image_mysql.php
@@ -69,13 +69,13 @@ Also moves the 'share/icons' location so 'share' directory can be symlinked.
 	RewriteRule soap/? /patch_soap.php [L]
 	
 	# for ezjscore extension
-    RewriteRule ezjscore/call/ /patch_index_ajax.php [L]
-    RewriteRule ezjscore/run/ /patch_index_ajax.php [L]
-    
-    RewriteRule ^/content/treemenu/.* /patch_index_treemenu.php [L]
-    
-    RewriteRule .* /patch_index.php
-    
+	RewriteRule ezjscore/call/ /patch_index_ajax.php [L]
+	RewriteRule ezjscore/run/ /patch_index_ajax.php [L]
+	
+	RewriteRule ^/content/treemenu/.* /patch_index_treemenu.php [L]
+	
+	RewriteRule .* /patch_index.php
+
 6. OPTIONAL. Add to icon.ini (included in ez_sbase):
 	
 	[IconSettings]
