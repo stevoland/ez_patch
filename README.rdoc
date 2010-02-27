@@ -7,14 +7,14 @@ A compilation of patches which can be shared between eZ Publish installations. A
 See inline comments for details
 
 * eznewsletter-1.6b
-	* Fixes a host of bugs
+  * Fixes a host of bugs
 * ezoe-5.0.4 (hope to remove)
-	* add modified time to cached js+css files.
-	* mofifications for _soextra extension
+  * add modified time to cached js+css files.
+  * mofifications for _soextra extension
 * varnish-4.2.0
-	* specific hacks for varnish compatability. Should be able to move all this to workflows.
+  * specific hacks for varnish compatability. Should be able to move all this to workflows.
 * ezpublish-4.2.0
-	* misc stuff, mostly for implementing advanced frontend editing features in ez_sbase.
+  * misc stuff, mostly for implementing advanced frontend editing features in ez_sbase.
 	
 Also moves the 'share/icons' location so 'share' directory can be symlinked.
 
@@ -54,14 +54,14 @@ Also moves the 'share/icons' location so 'share' directory can be symlinked.
 	
 4. Repeat with other startup files, eg:
 	
-	* index_image.php
-	* index_image_dfsmysql.php
-	* index_image_mysql.php
-	* index_treemenu.php
-	* index_ajax.php
-	* runcronjobs.php
-	* soap.php
-	* webdav.php
+  * index_image.php
+  * index_image_dfsmysql.php
+  * index_image_mysql.php
+  * index_treemenu.php
+  * index_ajax.php
+  * runcronjobs.php
+  * soap.php
+  * webdav.php
 
 5. Modify server setup (e. http.conf) to call 'patch_index.php' instead of defaults, Eg:
 	
