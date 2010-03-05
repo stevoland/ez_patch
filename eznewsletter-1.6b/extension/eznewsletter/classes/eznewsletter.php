@@ -929,140 +929,140 @@ class eZNewsletter extends eZPersistentObject
             $skipCount = 0;
             
 			// HACK!
-				$receiverList = eZSendNewsletterItem::fetchByNewsletterID( $newsletter->attribute( 'id' ),
-                                                                              0,
-                                                                              $receiverLimit );
-				
-                foreach( $receiverList as $receiver )
+			$receiverList = eZSendNewsletterItem::fetchByNewsletterID( $newsletter->attribute( 'id' ),
+                                                                          0,
+                                                                          $receiverLimit );
+			
+            foreach( $receiverList as $receiver )
+            {
+                $msgid = eZNewsletter::generateMessageId( $newsletterMailData[eZNewsletter::OutputFormatText]['emailSender'] ,
+                                                          $receiver->attribute( 'id' ),
+                                                          $idcounter++,
+                                                          $hostSettings );
+                $mail->setMessageID( $msgid );
+
+                $userData = $receiver->attribute( 'user_data' );
+                if ( !$userData )
                 {
-                    $msgid = eZNewsletter::generateMessageId( $newsletterMailData[eZNewsletter::OutputFormatText]['emailSender'] ,
-                                                              $receiver->attribute( 'id' ),
-                                                              $idcounter++,
-                                                              $hostSettings );
-                    $mail->setMessageID( $msgid );
-
-                    $userData = $receiver->attribute( 'user_data' );
-                    if ( !$userData )
-                    {
-                        //When no userdata is found, it is usually the result of a deleted subscription,
-                        //we mark the mail as being sent, without sending it.
-                        $receiver->setAttribute( 'send_status', eZSendNewsletterItem::SendStatusSent );
-                        $receiver->setAttribute( 'send_ts', time() );
-                        $receiver->sync();
-                        continue;
-                    }
-
-                    // #TODO# IDs expected
-                    $userOutputFormatList = explode( ',', $userData['output_format'] ); // #TODO#
-                    #echo " ### userOutputFormatList\n";  ok
-                    #var_dump( $userOutputFormatList );
-                    #echo " ### newsletterOutputFormatList\n"; ok
-                    #var_dump( $newsletterOutputFormatList );
-                    $outputFormat = false;
-
-                    //special case for SMS sending
-                    if ( in_array( eZNewsletter::OutputFormatSMS, $userOutputFormatList ) &&
-                         in_array( eZNewsletter::OutputFormatSMS, $newsletterOutputFormatList ) )
-                    {
-                        $mail->setContentType( "sms", false, false, false, $boundary );
-                        $outputFormat = eZNewsletter::OutputFormatSMS;
-
-                        //$mail->setSubject( $userMailData['subject'] );                                        ### $userMailData is undefined
-                       # echo " ### userMailData\n";
-                       # var_dump( $userMailData );
-                       # $mail->setSubject( $userMailData['subject'] );
-                       # $mail->setReceiver( $userData['email'] );
-                       # $mail->setMobile( $userData['mobile'] );
-                        //$mail->setBody( $userMailData['body'] );                                              ### $userMailData is undefined
-                       # $mail->setBody( $userMailData['body'] );                        
-                       # $mail->setDateTimestamp( $newsletter->attribute( 'send_date') );
-
-                        $mailResult = eZNewsletterMailTransport::send( $mail, false );
-                    }
-
-                    //send regular emails
-                    if ( in_array( eZNewsletter::OutputFormatHTML, $userOutputFormatList ) &&
-                         in_array( eZNewsletter::OutputFormatHTML, $newsletterOutputFormatList  ) )
-                    {
-                        $mail->setContentType( "multipart/related", false, false, false, $boundary );
-                        $outputFormat = eZNewsletter::OutputFormatHTML;
-                    }
-
-                    if ( in_array( eZNewsletter::OutputFormatExternalHTML, $userOutputFormatList ) &&
-                         in_array( eZNewsletter::OutputFormatExternalHTML, $newsletterOutputFormatList  ) )
-                    {
-                        $mail->setContentType( "multipart/related", false, false, false, $boundary );
-                        $outputFormat = eZNewsletter::OutputFormatExternalHTML;
-                    }
-
-                    // ...
-                    if ( $outputFormat === false )
-                    {
-                        $outputIntersect = array_intersect( $userOutputFormatList, $newsletterOutputFormatList );
-                        if ( count( $outputIntersect ) > 0 )
-                        {
-                            $outputFormat = $outputIntersect[0];
-                        }
-                    }
-                    
-                    if ( $outputFormat !== false )
-                    {
-                        //personalize if set in type
-                        $newsletter_type = eZNewsletterType::fetch( $newsletter->attribute( 'newslettertype_id' ) );
-
-                        if ( $newsletter_type->attribute( 'personalise' ) === '1' )
-                        {
-                            $userMailData = eZNewsletter::personalize( $newsletterMailData[$outputFormat], $userData, true );
-                        }
-                        else
-                        {
-                            $userMailData = eZNewsletter::personalize( $newsletterMailData[$outputFormat], $userData, false );
-                        }
-
-                        $mail->setSubject( $userMailData['subject'] );
-                        $mail->setReceiver( $userData['email'] );
-                        $mail->setMobile( $userData['mobile'] );
-                        $mail->setBody( $userMailData['body'] );
-                        $mail->setDateTimestamp( $newsletter->attribute( 'send_date') );
-
-                        //if only SMS was selected, don't send email
-                        if ( !( in_array(eZNewsletter::OutputFormatSMS, $userOutputFormatList ) && (count($userOutputFormatList) == 1) ) )
-                        {
-                            $mailResult = eZNewsletterMailTransport::send( $mail, false );
-                        }
-                        $sendCount++;
-                    }
-                    else
-                    {
-                        // User doesnt want any format we defined - skipped
-                        $skipCount++;
-                    }
-
+                    //When no userdata is found, it is usually the result of a deleted subscription,
+                    //we mark the mail as being sent, without sending it.
                     $receiver->setAttribute( 'send_status', eZSendNewsletterItem::SendStatusSent );
                     $receiver->setAttribute( 'send_ts', time() );
                     $receiver->sync();
+                    continue;
                 }
 
-                //send SMS messages
-                $instance = eZSMS::instance();
-                if ( $instance->countNumbers() > 0 )
+                // #TODO# IDs expected
+                $userOutputFormatList = explode( ',', $userData['output_format'] ); // #TODO#
+                #echo " ### userOutputFormatList\n";  ok
+                #var_dump( $userOutputFormatList );
+                #echo " ### newsletterOutputFormatList\n"; ok
+                #var_dump( $newsletterOutputFormatList );
+                $outputFormat = false;
+
+                //special case for SMS sending
+                if ( in_array( eZNewsletter::OutputFormatSMS, $userOutputFormatList ) &&
+                     in_array( eZNewsletter::OutputFormatSMS, $newsletterOutputFormatList ) )
                 {
-                    echo "Preparing to send ".$instance->countNumbers()." SMS messages..."."\n";
-                    $instance->setContent( $newsletterMailData[eZNewsletter::OutputFormatSMS]['body'] );
+                    $mail->setContentType( "sms", false, false, false, $boundary );
+                    $outputFormat = eZNewsletter::OutputFormatSMS;
 
-                    foreach ($instance->getNumbers() as $number)
+                    //$mail->setSubject( $userMailData['subject'] );                                        ### $userMailData is undefined
+                   # echo " ### userMailData\n";
+                   # var_dump( $userMailData );
+                   # $mail->setSubject( $userMailData['subject'] );
+                   # $mail->setReceiver( $userData['email'] );
+                   # $mail->setMobile( $userData['mobile'] );
+                    //$mail->setBody( $userMailData['body'] );                                              ### $userMailData is undefined
+                   # $mail->setBody( $userMailData['body'] );                        
+                   # $mail->setDateTimestamp( $newsletter->attribute( 'send_date') );
+
+                    $mailResult = eZNewsletterMailTransport::send( $mail, false );
+                }
+
+                //send regular emails
+                if ( in_array( eZNewsletter::OutputFormatHTML, $userOutputFormatList ) &&
+                     in_array( eZNewsletter::OutputFormatHTML, $newsletterOutputFormatList  ) )
+                {
+                    $mail->setContentType( "multipart/related", false, false, false, $boundary );
+                    $outputFormat = eZNewsletter::OutputFormatHTML;
+                }
+
+                if ( in_array( eZNewsletter::OutputFormatExternalHTML, $userOutputFormatList ) &&
+                     in_array( eZNewsletter::OutputFormatExternalHTML, $newsletterOutputFormatList  ) )
+                {
+                    $mail->setContentType( "multipart/related", false, false, false, $boundary );
+                    $outputFormat = eZNewsletter::OutputFormatExternalHTML;
+                }
+
+                // ...
+                if ( $outputFormat === false )
+                {
+                    $outputIntersect = array_intersect( $userOutputFormatList, $newsletterOutputFormatList );
+                    if ( count( $outputIntersect ) > 0 )
                     {
-                        echo "Recipient is: ".$number."\n";
+                        $outputFormat = $outputIntersect[0];
+                    }
+                }
+                
+                if ( $outputFormat !== false )
+                {
+                    //personalize if set in type
+                    $newsletter_type = eZNewsletterType::fetch( $newsletter->attribute( 'newslettertype_id' ) );
+
+                    if ( $newsletter_type->attribute( 'personalise' ) === '1' )
+                    {
+                        $userMailData = eZNewsletter::personalize( $newsletterMailData[$outputFormat], $userData, true );
+                    }
+                    else
+                    {
+                        $userMailData = eZNewsletter::personalize( $newsletterMailData[$outputFormat], $userData, false );
                     }
 
-                    $reply = $instance->sendMessages();
-                    if ( $reply != "" )
+                    $mail->setSubject( $userMailData['subject'] );
+                    $mail->setReceiver( $userData['email'] );
+                    $mail->setMobile( $userData['mobile'] );
+                    $mail->setBody( $userMailData['body'] );
+                    $mail->setDateTimestamp( $newsletter->attribute( 'send_date') );
+
+                    //if only SMS was selected, don't send email
+                    if ( !( in_array(eZNewsletter::OutputFormatSMS, $userOutputFormatList ) && (count($userOutputFormatList) == 1) ) )
                     {
-                        echo "SMS Reply:"."\n";
-                        echo $reply;
+                        $mailResult = eZNewsletterMailTransport::send( $mail, false );
                     }
+                    $sendCount++;
+                }
+                else
+                {
+                    // User doesnt want any format we defined - skipped
+                    $skipCount++;
+                }
+
+                $receiver->setAttribute( 'send_status', eZSendNewsletterItem::SendStatusSent );
+                $receiver->setAttribute( 'send_ts', time() );
+                $receiver->sync();
+            }
+
+            //send SMS messages
+            $instance = eZSMS::instance();
+            if ( $instance->countNumbers() > 0 )
+            {
+                echo "Preparing to send ".$instance->countNumbers()." SMS messages..."."\n";
+                $instance->setContent( $newsletterMailData[eZNewsletter::OutputFormatSMS]['body'] );
+
+                foreach ($instance->getNumbers() as $number)
+                {
+                    echo "Recipient is: ".$number."\n";
+                }
+
+                $reply = $instance->sendMessages();
+                if ( $reply != "" )
+                {
+                    echo "SMS Reply:"."\n";
+                    echo $reply;
                 }
             }
+            //}
             return array( 'sendCount' => $sendCount, 'skipCount' => $skipCount );
         }
         else
