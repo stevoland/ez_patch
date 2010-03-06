@@ -53,9 +53,9 @@ eZVLoginHelper::setUserCookie( $user );
 
 $user->logoutCurrent();
 
-// STEVO
-// Set eZVLogin cookie
-sUserDataHelper::setCookie();
+// HACK! seems to be no trigger for login/logout
+if ( class_exists('sNoCacheCookieHelper') )
+	sNoCacheCookieHelper::setCookie();
 
 $http->setSessionVariable( 'force_logout', 1 );
 
