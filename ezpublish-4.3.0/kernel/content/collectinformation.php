@@ -182,6 +182,9 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
                 $requireFixup = true;
             else if ( $status == eZInputValidator::STATE_INVALID )
             {
+    var_dump($contentObjectAttribute);
+    var_dump($status);
+    exit;
                 $canCollect = false;
                 $description = $contentObjectAttribute->attribute( 'validation_error' );
                 $hasValidationError = $contentObjectAttribute->attribute( 'has_validation_error' );
@@ -232,6 +235,7 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
         }
     }
     $db->commit();
+
 
     if ( $canCollect )
     {
@@ -294,8 +298,9 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
             $ini = eZINI::instance();
             $mail = new eZMail();
 
-            if ( $tpl->hasVariable( 'content_type' ) )
+            if ( $tpl->hasVariable( 'content_type' ) ) {
                 $mail->setContentType( $tpl->variable( 'content_type' ) );
+            }
 
             if ( !$mail->validate( $receiver ) )
             {
@@ -376,7 +381,7 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
 			//Plain Text part of Message
 	
 			$message = "--{$mime_boundary}\n" .
-			"Content-Type: text/plain; ".
+			"Content-Type: text/html; ".
 			eZTextCodec::internalCharset() . "\n" .
 			"Content-Transfer-Encoding: 8bit\n\n";
 	
